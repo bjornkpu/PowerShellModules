@@ -1,0 +1,10 @@
+# Downloaded content
+
+# Built content
+.venv
+# User files
+.vscode
+.idea
+# Temp files
+
+# Secrets
