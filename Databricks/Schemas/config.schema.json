@@ -1,0 +1,59 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "databricks": {
+            "type": "object",
+            "properties": {
+                "host": {
+                    "type": "string",
+                    "description": "Databricks workspace URL (e.g., https://your-workspace.azuredatabricks.net)",
+                    "pattern": "^https://.*\\.azuredatabricks\\.net$",
+                    "minLength": 1
+                },
+                "accountId": {
+                    "type": "string",
+                    "description": "Your Databricks account email address",
+                    "pattern": "^(?!<).*@.*\\..*(?<!>)$",
+                    "minLength": 1
+                },
+                "clusterId": {
+                    "type": "string",
+                    "description": "Default cluster ID (e.g., 0904-090205-7bmqua3s)",
+                    "pattern": "^(?!<)[0-9]{4}-[0-9]{6}-[a-z0-9]+(?<!>)$",
+                    "minLength": 1
+                },
+                "workspacePath": {
+                    "type": "string",
+                    "description": "Local path to your Python package workspace (e.g., C:\\repos\\your-project)",
+                    "pattern": "^(?!<).*(?<!>)$",
+                    "minLength": 1
+                },
+                "defaultPackage": {
+                    "type": "string",
+                    "description": "Default Python package name to deploy",
+                    "pattern": "^(?!<)[a-zA-Z0-9_-]+(?<!>)$",
+                    "minLength": 1
+                },
+                "profile": {
+                    "type": "string",
+                    "description": "Databricks CLI profile name",
+                    "pattern": "^(?!<).*(?<!>)$",
+                    "default": "DEFAULT"
+                }
+            },
+            "required": [
+                "host",
+                "accountId",
+                "clusterId",
+                "workspacePath",
+                "defaultPackage"
+            ],
+            "additionalProperties": false
+        }
+    },
+    "required": [
+        "databricks"
+    ],
+    "additionalProperties": false
+}

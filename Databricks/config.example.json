@@ -1,0 +1,10 @@
+{
+    "databricks": {
+        "host": "https://your-workspace.azuredatabricks.net",
+        "accountId": "your.email@company.com",
+        "clusterId": "0904-090205-xxxxxx",
+        "workspacePath": "C:\\repos\\your-project",
+        "defaultPackage": "your-package-name",
+        "profile": "DEFAULT"
+    }
+}
