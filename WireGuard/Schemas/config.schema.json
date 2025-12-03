@@ -1,0 +1,32 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "wireguard": {
+            "type": "object",
+            "properties": {
+                "defaultTunnel": {
+                    "type": "string",
+                    "description": "Default WireGuard tunnel name",
+                    "pattern": "^(?!<).*(?<!>)$",
+                    "minLength": 1
+                },
+                "wireguardPath": {
+                    "type": "string",
+                    "description": "Path to wg.exe executable",
+                    "pattern": "^(?!<).*(?<!>)$",
+                    "minLength": 1
+                }
+            },
+            "required": [
+                "defaultTunnel",
+                "wireguardPath"
+            ],
+            "additionalProperties": false
+        }
+    },
+    "required": [
+        "wireguard"
+    ],
+    "additionalProperties": false
+}

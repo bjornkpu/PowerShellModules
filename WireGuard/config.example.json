@@ -1,0 +1,6 @@
+{
+    "wireguard": {
+        "defaultTunnel": "home",
+        "wireguardPath": "C:\\Program Files\\WireGuard\\wg.exe"
+    }
+}
