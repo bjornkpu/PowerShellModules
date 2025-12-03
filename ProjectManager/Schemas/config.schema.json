@@ -1,0 +1,84 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "patternProperties": {
+        "^[a-zA-Z0-9_-]+$": {
+            "type": "object",
+            "properties": {
+                "BasePath": {
+                    "type": "string",
+                    "description": "Base directory path for the project",
+                    "pattern": "^(?!<).*(?<!>)$",
+                    "minLength": 1
+                },
+                "Components": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^[a-zA-Z0-9_-]+$": {
+                            "type": "object",
+                            "properties": {
+                                "Icon": {
+                                    "type": "string",
+                                    "description": "Emoji icon for the component"
+                                },
+                                "Description": {
+                                    "type": "string",
+                                    "description": "Brief description of the component"
+                                },
+                                "Path": {
+                                    "type": "string",
+                                    "description": "Relative path from BasePath to component directory"
+                                },
+                                "SetupCommands": {
+                                    "type": "array",
+                                    "description": "Commands to run before starting (e.g., activate venv)",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                "Color": {
+                                    "type": "string",
+                                    "description": "Display color (e.g., Cyan, Green, Yellow)",
+                                    "enum": [
+                                        "Black",
+                                        "Blue",
+                                        "Cyan",
+                                        "DarkBlue",
+                                        "DarkCyan",
+                                        "DarkGray",
+                                        "DarkGreen",
+                                        "DarkMagenta",
+                                        "DarkRed",
+                                        "DarkYellow",
+                                        "Gray",
+                                        "Green",
+                                        "Magenta",
+                                        "Red",
+                                        "White",
+                                        "Yellow"
+                                    ]
+                                },
+                                "StartCommand": {
+                                    "type": "string",
+                                    "description": "Command to start the component (e.g., npm run dev)"
+                                }
+                            },
+                            "required": [
+                                "Description",
+                                "Path",
+                                "StartCommand"
+                            ],
+                            "additionalProperties": false
+                        }
+                    }
+                }
+            },
+            "required": [
+                "BasePath",
+                "Components"
+            ],
+            "additionalProperties": false
+        }
+    },
+    "additionalProperties": false
+}

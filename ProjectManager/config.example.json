@@ -1,0 +1,25 @@
+{
+    "my-project": {
+        "BasePath": "C:\\repos\\my-project",
+        "Components": {
+            "frontend": {
+                "Icon": "⚛️",
+                "Description": "React/Next.js Frontend",
+                "Path": "frontend",
+                "SetupCommands": [],
+                "Color": "Cyan",
+                "StartCommand": "npm run dev"
+            },
+            "backend": {
+                "Icon": "🐍",
+                "Description": "Python Backend API",
+                "Path": "backend",
+                "SetupCommands": [
+                    ".\\.venv\\Scripts\\Activate.ps1"
+                ],
+                "Color": "Green",
+                "StartCommand": "uvicorn app.main:app --reload"
+            }
+        }
+    }
+}
