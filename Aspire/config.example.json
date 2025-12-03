@@ -1,0 +1,10 @@
+{
+    "aspire": {
+        "containerRuntime": "podman",
+        "dashboardPort": 18888,
+        "otlpPort": 4317,
+        "openBrowser": true,
+        "containerName": "aspire-dashboard",
+        "image": "mcr.microsoft.com/dotnet/aspire-dashboard:latest"
+    }
+}

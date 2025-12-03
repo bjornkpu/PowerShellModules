@@ -1,0 +1,66 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "aspire": {
+            "type": "object",
+            "properties": {
+                "containerRuntime": {
+                    "type": "string",
+                    "description": "Container runtime to use (docker or podman)",
+                    "enum": [
+                        "docker",
+                        "podman"
+                    ],
+                    "default": "podman"
+                },
+                "dashboardPort": {
+                    "type": "integer",
+                    "description": "Port for the Aspire Dashboard web interface",
+                    "minimum": 1024,
+                    "maximum": 65535,
+                    "default": 18888
+                },
+                "otlpPort": {
+                    "type": "integer",
+                    "description": "Port for OpenTelemetry Protocol (OTLP) endpoint",
+                    "minimum": 1024,
+                    "maximum": 65535,
+                    "default": 4317
+                },
+                "openBrowser": {
+                    "type": "boolean",
+                    "description": "Automatically open browser when starting dashboard",
+                    "default": true
+                },
+                "containerName": {
+                    "type": "string",
+                    "description": "Name for the Aspire Dashboard container",
+                    "pattern": "^(?!<).*(?<!>)$",
+                    "minLength": 1,
+                    "default": "aspire-dashboard"
+                },
+                "image": {
+                    "type": "string",
+                    "description": "Docker image to use for Aspire Dashboard",
+                    "pattern": "^(?!<).*(?<!>)$",
+                    "minLength": 1,
+                    "default": "mcr.microsoft.com/dotnet/aspire-dashboard:latest"
+                }
+            },
+            "required": [
+                "containerRuntime",
+                "dashboardPort",
+                "otlpPort",
+                "openBrowser",
+                "containerName",
+                "image"
+            ],
+            "additionalProperties": false
+        }
+    },
+    "required": [
+        "aspire"
+    ],
+    "additionalProperties": false
+}
