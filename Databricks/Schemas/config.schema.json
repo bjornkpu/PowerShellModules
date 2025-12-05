@@ -40,6 +40,13 @@
                     "description": "Databricks CLI profile name",
                     "pattern": "^(?!<).*(?<!>)$",
                     "default": "DEFAULT"
+                },
+                "keepAliveIntervalMinutes": {
+                    "type": "integer",
+                    "description": "Keep-alive interval in minutes (default: 30)",
+                    "minimum": 5,
+                    "maximum": 39,
+                    "default": 30
                 }
             },
             "required": [

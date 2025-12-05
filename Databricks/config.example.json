@@ -5,6 +5,7 @@
         "clusterId": "0904-090205-xxxxxx",
         "workspacePath": "C:\\repos\\your-project",
         "defaultPackage": "your-package-name",
-        "profile": "DEFAULT"
+        "profile": "DEFAULT",
+        "keepAliveIntervalMinutes": 30
     }
 }

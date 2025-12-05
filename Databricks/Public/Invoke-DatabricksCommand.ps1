@@ -8,7 +8,7 @@ function Invoke-DatabricksCommand {
     package upload, and installation.
 
     .PARAMETER Command
-    The Databricks command to execute: login, start, stop, list, upload, install, upstall
+    The Databricks command to execute: login, start, stop, list, upload, install, upstall, keep-alive
 
     .PARAMETER PackageVersion
     Version of the package to upload/install. Defaults to reading from pyproject.toml
@@ -25,7 +25,7 @@ function Invoke-DatabricksCommand {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory, Position = 0)]
-        [ValidateSet('login', 'start', 'stop', 'list', 'ls', 'upload', 'install', 'upstall')]
+        [ValidateSet('login', 'start', 'stop', 'list', 'ls', 'upload', 'install', 'upstall', 'keep-alive')]
         [string]$Command,
 
         [Parameter(Position = 1)]
@@ -100,6 +100,9 @@ function Invoke-DatabricksCommand {
         "upstall" {
             Invoke-DatabricksCommand -Command upload -PackageVersion $PackageVersion
             Invoke-DatabricksCommand -Command install -PackageVersion $PackageVersion
+        }
+        "keep-alive" {
+            Start-DatabricksKeepAlive
         }
     }
 }
