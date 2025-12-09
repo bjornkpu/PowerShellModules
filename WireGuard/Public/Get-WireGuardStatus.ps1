@@ -2,16 +2,16 @@ function Get-WireGuardStatus {
     <#
     .SYNOPSIS
     Gets the status of WireGuard tunnels.
-    
+
     .DESCRIPTION
     Displays the current status of WireGuard tunnels using the wg.exe tool.
-    
+
     .PARAMETER TunnelName
     Name of the WireGuard tunnel to check. If not specified, shows all tunnels.
-    
+
     .EXAMPLE
     Get-WireGuardStatus
-    
+
     .EXAMPLE
     Get-WireGuardStatus -TunnelName 'home'
     #>
@@ -23,9 +23,9 @@ function Get-WireGuardStatus {
 
     # Load config
     $config = Get-ModuleConfig -ModuleName 'WireGuard' `
-        -SchemaPath "$PSScriptRoot/../Schemas/config.schema.json" `
+        -SchemaPath "$PSScriptRoot/../config.schema.json" `
         -ExampleConfigPath "$PSScriptRoot/../config.example.json"
-    
+
     $wgPath = $config.wireguard.wireguardPath
 
     Write-Host "Checking WireGuard status..." -ForegroundColor Cyan

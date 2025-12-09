@@ -33,7 +33,7 @@ function Set-WireGuardStartupMode {
 
     # Load config
     $config = Get-ModuleConfig -ModuleName 'WireGuard' `
-        -SchemaPath "$PSScriptRoot/../Schemas/config.schema.json" `
+        -SchemaPath "$PSScriptRoot/../config.schema.json" `
         -ExampleConfigPath "$PSScriptRoot/../config.example.json"
 
     if (-not $TunnelName) {

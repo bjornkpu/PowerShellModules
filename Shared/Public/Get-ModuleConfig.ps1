@@ -26,7 +26,7 @@ function Get-ModuleConfig {
     $config = Get-ModuleConfig -ModuleName 'Aspire'
 
     .EXAMPLE
-    $config = Get-ModuleConfig -ModuleName 'Databricks' -SchemaPath "$PSScriptRoot/../Schemas/config.schema.json" -ExampleConfigPath "$PSScriptRoot/../config.example.json"
+    $config = Get-ModuleConfig -ModuleName 'Databricks' -SchemaPath "$PSScriptRoot/config.schema.json" -ExampleConfigPath "$PSScriptRoot/config.example.json"
     #>
     [CmdletBinding()]
     param(

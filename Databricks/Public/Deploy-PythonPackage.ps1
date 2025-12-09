@@ -29,7 +29,7 @@ function Deploy-PythonPackage {
 
     # Load config
     $config = Get-ModuleConfig -ModuleName 'Databricks' `
-        -SchemaPath "$PSScriptRoot/../Schemas/config.schema.json" `
+        -SchemaPath "$PSScriptRoot/../config.schema.json" `
         -ExampleConfigPath "$PSScriptRoot/../config.example.json"
 
     $dbConfig = $config.databricks

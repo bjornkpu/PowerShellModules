@@ -2,16 +2,16 @@ function Start-WireGuardTunnel {
     <#
     .SYNOPSIS
     Starts a WireGuard VPN tunnel.
-    
+
     .DESCRIPTION
     Starts the specified WireGuard tunnel service with elevated privileges.
-    
+
     .PARAMETER TunnelName
     Name of the WireGuard tunnel to start. If not specified, uses default from config.
-    
+
     .EXAMPLE
     Start-WireGuardTunnel
-    
+
     .EXAMPLE
     Start-WireGuardTunnel -TunnelName 'work'
     #>
@@ -23,9 +23,9 @@ function Start-WireGuardTunnel {
 
     # Load config
     $config = Get-ModuleConfig -ModuleName 'WireGuard' `
-        -SchemaPath "$PSScriptRoot/../Schemas/config.schema.json" `
+        -SchemaPath "$PSScriptRoot/../config.schema.json" `
         -ExampleConfigPath "$PSScriptRoot/../config.example.json"
-    
+
     if (-not $TunnelName) {
         $TunnelName = $config.wireguard.defaultTunnel
     }

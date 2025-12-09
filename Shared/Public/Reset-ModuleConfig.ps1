@@ -16,7 +16,7 @@ function Reset-ModuleConfig {
     Path to the example config file.
 
     .EXAMPLE
-    Reset-ModuleConfig -ModuleName 'Databricks' -SchemaPath "./Schemas/config.schema.json" -ExampleConfigPath "./config.example.json"
+    Reset-ModuleConfig -ModuleName 'Databricks' -SchemaPath "./config.schema.json" -ExampleConfigPath "./config.example.json"
     #>
     [CmdletBinding()]
     param(

@@ -14,7 +14,7 @@ function Test-ConfigSchema {
     Path to the JSON schema file.
 
     .EXAMPLE
-    $result = Test-ConfigSchema -ConfigPath "~/.config/Databricks/config.json" -SchemaPath "./Schemas/config.schema.json"
+    $result = Test-ConfigSchema -ConfigPath "~/.config/Databricks/config.json" -SchemaPath "./config.schema.json"
     #>
     [CmdletBinding()]
     param(

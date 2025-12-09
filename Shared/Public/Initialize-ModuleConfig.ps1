@@ -17,7 +17,7 @@ function Initialize-ModuleConfig {
     Path to the example config file with defaults.
 
     .EXAMPLE
-    Initialize-ModuleConfig -ModuleName 'Databricks' -SchemaPath "./Schemas/config.schema.json" -ExampleConfigPath "./config.example.json"
+    Initialize-ModuleConfig -ModuleName 'Databricks' -SchemaPath "./config.schema.json" -ExampleConfigPath "./config.example.json"
     #>
     [CmdletBinding()]
     param(

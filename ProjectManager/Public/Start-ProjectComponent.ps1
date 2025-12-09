@@ -28,7 +28,7 @@ function Start-ProjectComponent {
     # Load config if not cached
     if (-not $script:ProjectConfig) {
         $configData = Get-ModuleConfig -ModuleName 'ProjectManager' `
-            -SchemaPath "$PSScriptRoot/../Schemas/config.schema.json" `
+            -SchemaPath "$PSScriptRoot/../config.schema.json" `
             -ExampleConfigPath "$PSScriptRoot/../config.example.json"
         $script:ProjectConfig = $configData
     }
