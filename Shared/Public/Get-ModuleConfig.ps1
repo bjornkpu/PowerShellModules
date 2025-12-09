@@ -8,17 +8,22 @@ function Get-ModuleConfig {
     Validates against the module's JSON schema and caches the result in module scope.
     If config doesn't exist, triggers interactive initialization.
 
+    Auto-discovers schema and example config from module root directory if not specified.
+
     .PARAMETER ModuleName
     Name of the module to load configuration for.
 
     .PARAMETER SchemaPath
-    Path to the JSON schema file for validation.
+    Path to the JSON schema file for validation. Defaults to {ModuleRoot}/config.schema.json
 
     .PARAMETER ExampleConfigPath
-    Path to the example config file with defaults.
+    Path to the example config file with defaults. Defaults to {ModuleRoot}/config.example.json
 
     .PARAMETER Force
     Force reload of configuration, bypassing cache.
+
+    .EXAMPLE
+    $config = Get-ModuleConfig -ModuleName 'Aspire'
 
     .EXAMPLE
     $config = Get-ModuleConfig -ModuleName 'Databricks' -SchemaPath "$PSScriptRoot/../Schemas/config.schema.json" -ExampleConfigPath "$PSScriptRoot/../config.example.json"
@@ -28,10 +33,10 @@ function Get-ModuleConfig {
         [Parameter(Mandatory)]
         [string]$ModuleName,
 
-        [Parameter(Mandatory)]
+        [Parameter()]
         [string]$SchemaPath,
 
-        [Parameter(Mandatory)]
+        [Parameter()]
         [string]$ExampleConfigPath,
 
         [switch]$Force
@@ -43,6 +48,36 @@ function Get-ModuleConfig {
     # Return cached config if available
     if (-not $Force -and (Get-Variable -Name $cacheKey -Scope Script -ErrorAction SilentlyContinue)) {
         return (Get-Variable -Name $cacheKey -Scope Script -ValueOnly)
+    }
+
+    # Auto-discover schema and example config paths if not provided
+    if (-not $SchemaPath -or -not $ExampleConfigPath) {
+        $module = Get-Module -Name $ModuleName -ErrorAction SilentlyContinue
+        if (-not $module) {
+            $module = Get-Module -Name $ModuleName -ListAvailable -ErrorAction SilentlyContinue | Select-Object -First 1
+        }
+
+        if ($module) {
+            $moduleRoot = Split-Path $module.Path -Parent
+
+            if (-not $SchemaPath) {
+                $SchemaPath = Join-Path $moduleRoot "config.schema.json"
+            }
+            if (-not $ExampleConfigPath) {
+                $ExampleConfigPath = Join-Path $moduleRoot "config.example.json"
+            }
+        }
+        else {
+            throw "Module '$ModuleName' not found. Cannot auto-discover schema and example config paths."
+        }
+    }
+
+    # Validate that schema and example config exist
+    if (-not (Test-Path $SchemaPath)) {
+        throw "Schema file not found at '$SchemaPath'"
+    }
+    if (-not (Test-Path $ExampleConfigPath)) {
+        throw "Example config not found at '$ExampleConfigPath'"
     }
 
     # Config path
