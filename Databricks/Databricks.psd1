@@ -6,8 +6,8 @@
     PowerShellVersion = '7.4'
     RootModule        = 'Databricks.psm1'
     RequiredModules   = @(@{ModuleName = 'Shared'; ModuleVersion = '0.1.0' })
-    FunctionsToExport = @('Invoke-DatabricksCommand', 'Deploy-PythonPackage')
+    FunctionsToExport = @('Invoke-DatabricksCommand', 'Deploy-PythonPackage', 'New-RunFailures')
     CmdletsToExport   = @()
     VariablesToExport = @()
-    AliasesToExport   = @('d')
+    AliasesToExport   = @('d', 'crf')
 }

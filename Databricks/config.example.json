@@ -7,5 +7,20 @@
         "defaultPackage": "your-package-name",
         "profile": "DEFAULT",
         "keepAliveIntervalMinutes": 30
+    },
+    "azureDevOps": {
+        "organization": "your-organization",
+        "project": "your-project",
+        "areaPath": "your-project\\Data Pipeline",
+        "iterationPath": "your-project\\Sprint 1",
+        "workItemMapping": {
+            "FAILED": "Bug",
+            "TIMEDOUT": "Bug"
+        },
+        "tags": [
+            "databricks",
+            "automated"
+        ],
+        "parentWorkItemId": 18213
     }
 }

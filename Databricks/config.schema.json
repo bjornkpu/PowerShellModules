@@ -57,6 +57,92 @@
                 "defaultPackage"
             ],
             "additionalProperties": false
+        },
+        "azureDevOps": {
+            "type": "object",
+            "properties": {
+                "organization": {
+                    "type": "string",
+                    "description": "Azure DevOps organization name (e.g., myorg)",
+                    "pattern": "^(?!<).*(?<!>)$",
+                    "minLength": 1
+                },
+                "project": {
+                    "type": "string",
+                    "description": "Azure DevOps project name (e.g., MyProject)",
+                    "pattern": "^(?!<).*(?<!>)$",
+                    "minLength": 1
+                },
+                "areaPath": {
+                    "type": "string",
+                    "description": "Work item area path (e.g., MyProject\\Data Pipeline)",
+                    "pattern": "^(?!<).*(?<!>)$",
+                    "minLength": 1
+                },
+                "iterationPath": {
+                    "type": "string",
+                    "description": "Work item iteration path (e.g., MyProject\\Sprint 1)",
+                    "pattern": "^(?!<).*(?<!>)$"
+                },
+                "workItemMapping": {
+                    "type": "object",
+                    "description": "Map Databricks run states to Azure DevOps work item types",
+                    "properties": {
+                        "FAILED": {
+                            "type": "string",
+                            "enum": [
+                                "Bug",
+                                "Issue",
+                                "User Story",
+                                "Task"
+                            ]
+                        },
+                        "TIMEDOUT": {
+                            "type": "string",
+                            "enum": [
+                                "Bug",
+                                "Issue",
+                                "User Story",
+                                "Task"
+                            ]
+                        },
+                        "CANCELED": {
+                            "type": "string",
+                            "enum": [
+                                "Bug",
+                                "Issue",
+                                "User Story",
+                                "Task"
+                            ]
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "tags": {
+                    "type": "array",
+                    "description": "Additional tags to add to work items",
+                    "items": {
+                        "type": "string"
+                    },
+                    "default": [
+                        "databricks",
+                        "automated"
+                    ]
+                },
+                "parentWorkItemId": {
+                    "type": "integer",
+                    "description": "Optional parent work item ID to link created work items to (e.g., 18213)",
+                    "minimum": 1
+                }
+            },
+            "required": [
+                "organization",
+                "project",
+                "areaPath",
+                "workItemMapping",
+                "parentWorkItemId"
+            ],
+            "additionalProperties": false
         }
     },
     "required": [

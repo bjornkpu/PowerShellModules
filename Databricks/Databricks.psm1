@@ -14,4 +14,4 @@ foreach ($function in $publicFunctions) {
 Export-ModuleMember -Function $publicFunctions.BaseName
 
 # Export aliases
-Export-ModuleMember -Alias 'd', 'ef'
+Export-ModuleMember -Alias 'd', 'ef', 'crf'
