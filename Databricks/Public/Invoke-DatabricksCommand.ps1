@@ -1,148 +1,112 @@
 function Invoke-DatabricksCommand {
     <#
     .SYNOPSIS
-    Wrapper for common Databricks CLI commands.
+    Command-based CLI for Databricks operations.
 
     .DESCRIPTION
-    Provides convenient shortcuts for Databricks operations like cluster management,
-    package upload, and installation.
+    Provides a command-based interface for common Databricks operations including cluster management,
+    package deployment, and workspace authentication. Each command supports environment-specific
+    configuration through the -Environment parameter.
+
+    AVAILABLE COMMANDS
+      login         Authenticate with Databricks workspace
+      start         Start a Databricks cluster
+      stop          Stop a Databricks cluster
+      list, ls      List all clusters in workspace
+      upload        Upload Python package to workspace
+      install       Install package on cluster
+      upstall       Upload and install in one step
+      keep-alive    Keep cluster alive with periodic heartbeat
 
     .PARAMETER Command
-    The Databricks command to execute: login, start, stop, list, upload, install, upstall, keep-alive
+    The command to execute. See AVAILABLE COMMANDS for details.
 
-    .PARAMETER PackageVersion
-    Version of the package to upload/install. Defaults to reading from pyproject.toml
-
-    .PARAMETER Environment
-    Environment to use (e.g., dev, prod). Uses environment-specific configuration from config.json
+    .PARAMETER Rest
+    Additional arguments passed to the command. Use 'd <command> help' for command-specific parameters.
 
     .EXAMPLE
-    Invoke-DatabricksCommand -Command login
+    d
+    Shows this help message
 
     .EXAMPLE
-    d start
+    d upload help
+    Shows detailed help for the upload command
 
     .EXAMPLE
-    d upstall 1.9.18
+    d login
+    Authenticates with default Databricks workspace
 
     .EXAMPLE
     d start -Environment prod
+    Starts the production cluster
+
+    .EXAMPLE
+    d upload -Version 1.2.3
+    Uploads version 1.2.3 of the package
+
+    .EXAMPLE
+    d upstall -Environment dev
+    Uploads and installs package to dev environment
+
+    .NOTES
+    This is a command dispatcher that routes to individual command handler functions.
+    All commands support the -Environment parameter for multi-environment workflows.
+    Package-related commands (upload, install, upstall) auto-detect version from pyproject.toml.
+
+    Use 'd help <command>' to see detailed help for each command.
     #>
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, Position = 0)]
+        [Parameter(Position = 0)]
+        [ArgumentCompleter({
+                param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+                $commands = @('login', 'start', 'stop', 'list', 'ls', 'upload', 'install', 'upstall', 'keep-alive')
+                $commands | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object { $_ }
+            })]
         [ValidateSet('login', 'start', 'stop', 'list', 'ls', 'upload', 'install', 'upstall', 'keep-alive')]
         [string]$Command,
 
-        [Parameter(Position = 1)]
-        [string]$PackageVersion,
-
-        [Parameter()]
-        [string]$Environment
+        [Parameter(Position = 1, ValueFromRemainingArguments = $true)]
+        $Rest
     )
 
-    # Load config
-    $config = Get-ModuleConfig -ModuleName 'Databricks' `
-        -SchemaPath "$PSScriptRoot/../config.schema.json" `
-        -ExampleConfigPath "$PSScriptRoot/../config.example.json"
-
-    $dbConfig = $config.databricks
-
-    # Apply environment-specific configuration if specified
-    if ($Environment) {
-        if (-not $dbConfig.environments) {
-            throw "No environments configured in config.json. Please add an 'environments' section."
-        }
-        if (-not $dbConfig.environments.$Environment) {
-            $availableEnvs = ($dbConfig.environments.PSObject.Properties.Name -join ', ')
-            throw "Environment '$Environment' not found in config. Available environments: $availableEnvs"
-        }
-
-        $envConfig = $dbConfig.environments.$Environment
-        Write-Host "Using environment: $Environment" -ForegroundColor Magenta
-
-        # Override with environment-specific values
-        $dbProfile = $envConfig.profile
-        $dbHost = $envConfig.host
-        $dbClusterId = $envConfig.clusterId
-    }
-    else {
-        # Use default configuration
-        $dbProfile = if ($dbConfig.profile) { $dbConfig.profile } else { "DEFAULT" }
-        $dbHost = $dbConfig.host
-        $dbClusterId = $dbConfig.clusterId
+    # Show help if no command specified
+    if (-not $Command) {
+        Command-Help
+        return
     }
 
-    # If version not specified, try to read from pyproject.toml
-    if (-not $PackageVersion -and ($Command -in @('upload', 'install', 'upstall'))) {
-        $pyprojectPath = Join-Path $dbConfig.workspacePath "$($dbConfig.defaultPackage)\pyproject.toml"
-        if (Test-Path $pyprojectPath) {
-            $content = Get-Content $pyprojectPath -Raw
-            if ($content -match 'version\s*=\s*"(\d+\.\d+\.\d+)"') {
-                $PackageVersion = $matches[1]
-                Write-Host "Using version from pyproject.toml: $PackageVersion" -ForegroundColor Cyan
+    # Check if help is requested for this command (e.g., "d upload help")
+    if ($Rest -and $Rest[0] -in @('help', '-?', '--help', '?')) {
+        Command-Help -CommandName $Command
+        return
+    }
+
+    # Convert $Rest array to proper splatting hashtable for named parameters
+    $params = @{}
+    for ($i = 0; $i -lt $Rest.Count; $i++) {
+        if ($Rest[$i] -is [string] -and $Rest[$i].StartsWith('-')) {
+            $paramName = $Rest[$i].TrimStart('-')
+            if ($i + 1 -lt $Rest.Count -and -not $Rest[$i + 1].StartsWith('-')) {
+                $params[$paramName] = $Rest[$i + 1]
+                $i++ # Skip the value
+            }
+            else {
+                $params[$paramName] = $true # Switch parameter
             }
         }
-        if (-not $PackageVersion) {
-            throw "Package version not specified and could not be read from pyproject.toml"
-        }
     }
 
+    # Dispatch to command handlers
     switch ($Command) {
-        "login" {
-            Write-Host "Logging into Databricks..." -ForegroundColor Cyan
-            databricks auth login --host $dbHost --account-id $dbConfig.accountId -p $dbProfile
-        }
-        "start" {
-            Write-Host "Starting cluster..." -ForegroundColor Cyan
-            databricks clusters start $dbClusterId -p $dbProfile
-        }
-        "stop" {
-            Write-Host "Stopping cluster..." -ForegroundColor Cyan
-            databricks clusters stop $dbClusterId -p $dbProfile
-        }
-        { $_ -in @("list", "ls") } {
-            Write-Host "Listing clusters..." -ForegroundColor Cyan
-            databricks clusters list -p $dbProfile
-        }
-        "upload" {
-            Write-Host "Uploading package version $PackageVersion..." -ForegroundColor Cyan
-            $fileName = "$($dbConfig.defaultPackage)-$PackageVersion-py3-none-any.whl"
-            $localFilePath = Join-Path $dbConfig.workspacePath "$($dbConfig.defaultPackage)\dist\$fileName"
-            $destinationPath = "/Workspace/Users/$($dbConfig.accountId)/$fileName"
-
-            if (-not (Test-Path $localFilePath)) {
-                throw "Package file not found: $localFilePath"
-            }
-
-            databricks workspace import --overwrite -p $dbProfile --file $localFilePath --format AUTO $destinationPath
-        }
-        "install" {
-            Write-Host "Installing version $PackageVersion on cluster..." -ForegroundColor Cyan
-            $fileName = "$($dbConfig.defaultPackage)-$PackageVersion-py3-none-any.whl"
-            $json = @{
-                "cluster_id" = $dbClusterId
-                "libraries"  = @(
-                    @{
-                        "whl" = "/Workspace/Users/$($dbConfig.accountId)/$fileName"
-                    }
-                )
-            } | ConvertTo-Json -Depth 3
-            databricks libraries install -p $dbProfile --json $json
-        }
-        "upstall" {
-            $params = @{
-                PackageVersion = $PackageVersion
-            }
-            if ($Environment) {
-                $params.Environment = $Environment
-            }
-            Invoke-DatabricksCommand -Command upload @params
-            Invoke-DatabricksCommand -Command install @params
-        }
-        "keep-alive" {
-            Start-DatabricksKeepAlive
-        }
+        'login' { Command-Login @params }
+        'start' { Command-Start @params }
+        'stop' { Command-Stop @params }
+        { $_ -in @('list', 'ls') } { Command-List @params }
+        'upload' { Command-Upload @params }
+        'install' { Command-Install @params }
+        'upstall' { Command-Upstall @params }
+        'keep-alive' { Command-KeepAlive @params }
     }
 }
 

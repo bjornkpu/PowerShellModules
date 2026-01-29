@@ -45,13 +45,6 @@ Create a maintainable, config-driven PowerShell module ecosystem that is:
 - Use `RequiredModules` in manifests for automatic dependency loading
 - Minimize manual steps in development workflow
 
-### 5. PowerShell Gallery Publishing
-
-- All modules published to PowerShell Gallery for `Install-Module` support
-- Users install with: `Install-Module ModuleName -Scope CurrentUser`
-- Semantic versioning enforced (MAJOR.MINOR.PATCH)
-- Module manifests include all required metadata (Author, Description, ProjectUri, LicenseUri, Tags)
-
 ## Architecture Guidelines
 
 ### Module Structure
@@ -122,43 +115,6 @@ The `Shared` module provides common utilities - always use these instead of dupl
 - **Reset-ModuleConfig** - Delete and reinitialize config
 
 Add `RequiredModules = @('Shared')` to your manifest to auto-import.
-
-### Versioning Workflow
-
-1. **Development** - Make changes, test locally
-2. **Commit** - `git add .` and `git commit -m "description"`
-3. **Tag** - `git tag v1.2.3` (semantic versioning)
-4. **Push** - `git push --tags` triggers pre-push hook
-5. **Automatic** - Hook updates all `.psd1` ModuleVersion fields and stages changes
-6. **Publish** - Run `Publish-ModuleToGallery.ps1 -ModuleName YourModule` to publish to PowerShell Gallery
-
-Never manually edit `ModuleVersion` in manifests - let Git handle it.
-
-### Publishing to PowerShell Gallery
-
-#### Prerequisites
-
-- PowerShell Gallery API key (get from https://www.powershellgallery.com/account/apikeys)
-- Module manifest with required metadata:
-  - `Author`
-  - `Description`
-  - `ProjectUri` (GitHub repo URL)
-  - `LicenseUri` (GitHub license URL)
-  - `Tags` (searchability keywords)
-
-#### Publishing Process
-
-```powershell
-# One-time: Set API key (stored securely)
-$apiKey = Read-Host -AsSecureString "Enter PowerShell Gallery API Key"
-$apiKey | ConvertFrom-SecureString | Out-File "$env:USERPROFILE\.psgallery-apikey"
-
-# Publish a module
-.\Publish-ModuleToGallery.ps1 -ModuleName WireGuard
-
-# Or publish with explicit version
-.\Publish-ModuleToGallery.ps1 -ModuleName WireGuard -Version 1.0.0
-```
 
 #### Installation by Users
 

@@ -1,3 +1,15 @@
+# Load private functions (not exported)
+$privateFunctions = Get-ChildItem -Path "$PSScriptRoot\Private\*.ps1" -ErrorAction SilentlyContinue
+
+foreach ($function in $privateFunctions) {
+    try {
+        . $function.FullName
+    }
+    catch {
+        Write-Error "Failed to import private function $($function.FullName): $_"
+    }
+}
+
 # Load public functions
 $publicFunctions = Get-ChildItem -Path "$PSScriptRoot\Public\*.ps1" -ErrorAction SilentlyContinue
 
@@ -14,4 +26,4 @@ foreach ($function in $publicFunctions) {
 Export-ModuleMember -Function $publicFunctions.BaseName
 
 # Export aliases
-Export-ModuleMember -Alias 'd', 'ef', 'crf'
+Export-ModuleMember -Alias 'd', 'crf'

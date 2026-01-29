@@ -8,14 +8,23 @@ function Start-DatabricksKeepAlive {
     every 30 minutes (configurable). Runs in the foreground - press Ctrl+C to stop.
     The cluster will auto-terminate normally after you stop the keep-alive loop.
 
+    .PARAMETER Environment
+    Optional environment name (e.g., 'dev', 'prod'). Uses default configuration if not specified.
+
     .EXAMPLE
     Start-DatabricksKeepAlive
+
+    .EXAMPLE
+    Start-DatabricksKeepAlive -Environment prod
 
     .EXAMPLE
     d keep-alive
     #>
     [CmdletBinding()]
-    param()
+    param(
+        [Parameter()]
+        [string]$Environment
+    )
 
     # Load config
     $config = Get-ModuleConfig -ModuleName 'Databricks' `
@@ -23,7 +32,9 @@ function Start-DatabricksKeepAlive {
         -ExampleConfigPath "$PSScriptRoot/../config.example.json"
 
     $dbConfig = $config.databricks
-    $dbProfile = if ($dbConfig.profile) { $dbConfig.profile } else { "DEFAULT" }
+    $envConfig = Get-EnvironmentConfig -Config $dbConfig -Environment $Environment
+    $dbProfile = $envConfig.profile
+    $dbClusterId = $envConfig.clusterId
 
     # Get keep-alive interval (default 30 minutes)
     $intervalMinutes = if ($dbConfig.keepAliveIntervalMinutes) {
@@ -40,7 +51,7 @@ function Start-DatabricksKeepAlive {
 
     Write-Host "Databricks Cluster Keep-Alive" -ForegroundColor Cyan
     Write-Host "==============================" -ForegroundColor Cyan
-    Write-Host "Cluster ID: $($dbConfig.clusterId)" -ForegroundColor White
+    Write-Host "Cluster ID: $dbClusterId" -ForegroundColor White
     Write-Host "Interval: $intervalMinutes minutes" -ForegroundColor White
     Write-Host "Press Ctrl+C to stop" -ForegroundColor Yellow
     Write-Host ""
@@ -73,7 +84,7 @@ function Start-DatabricksKeepAlive {
                 "tasks"    = @(
                     @{
                         "task_key"            = "keep_alive_task"
-                        "existing_cluster_id" = $dbConfig.clusterId
+                        "existing_cluster_id" = $dbClusterId
                         "notebook_task"       = @{
                             "notebook_path" = $notebookPath
                             "source"        = "WORKSPACE"
