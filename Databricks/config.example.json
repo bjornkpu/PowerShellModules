@@ -6,7 +6,19 @@
         "workspacePath": "C:\\repos\\your-project",
         "defaultPackage": "your-package-name",
         "profile": "DEFAULT",
-        "keepAliveIntervalMinutes": 30
+        "keepAliveIntervalMinutes": 30,
+        "environments": {
+            "dev": {
+                "profile": "DEFAULT",
+                "host": "https://your-dev-workspace.azuredatabricks.net",
+                "clusterId": "0904-090205-xxxxxx"
+            },
+            "prod": {
+                "profile": "PROD",
+                "host": "https://your-prod-workspace.azuredatabricks.net",
+                "clusterId": "1234-123456-yyyyyy"
+            }
+        }
     },
     "azureDevOps": {
         "organization": "your-organization",

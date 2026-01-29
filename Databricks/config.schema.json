@@ -47,6 +47,42 @@
                     "minimum": 5,
                     "maximum": 39,
                     "default": 30
+                },
+                "environments": {
+                    "type": "object",
+                    "description": "Environment-specific configurations (e.g., dev, prod)",
+                    "patternProperties": {
+                        "^[a-zA-Z0-9_-]+$": {
+                            "type": "object",
+                            "properties": {
+                                "profile": {
+                                    "type": "string",
+                                    "description": "Databricks CLI profile name for this environment",
+                                    "pattern": "^(?!<).*(?<!>)$",
+                                    "minLength": 1
+                                },
+                                "host": {
+                                    "type": "string",
+                                    "description": "Databricks workspace URL for this environment",
+                                    "pattern": "^https://.*\\.azuredatabricks\\.net$",
+                                    "minLength": 1
+                                },
+                                "clusterId": {
+                                    "type": "string",
+                                    "description": "Cluster ID for this environment",
+                                    "pattern": "^(?!<)[0-9]{4}-[0-9]{6}-[a-z0-9]+(?<!>)$",
+                                    "minLength": 1
+                                }
+                            },
+                            "required": [
+                                "profile",
+                                "host",
+                                "clusterId"
+                            ],
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
                 }
             },
             "required": [

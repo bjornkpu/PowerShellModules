@@ -13,6 +13,9 @@ function Invoke-DatabricksCommand {
     .PARAMETER PackageVersion
     Version of the package to upload/install. Defaults to reading from pyproject.toml
 
+    .PARAMETER Environment
+    Environment to use (e.g., dev, prod). Uses environment-specific configuration from config.json
+
     .EXAMPLE
     Invoke-DatabricksCommand -Command login
 
@@ -21,6 +24,9 @@ function Invoke-DatabricksCommand {
 
     .EXAMPLE
     d upstall 1.9.18
+
+    .EXAMPLE
+    d start -Environment prod
     #>
     [CmdletBinding()]
     param (
@@ -29,7 +35,10 @@ function Invoke-DatabricksCommand {
         [string]$Command,
 
         [Parameter(Position = 1)]
-        [string]$PackageVersion
+        [string]$PackageVersion,
+
+        [Parameter()]
+        [string]$Environment
     )
 
     # Load config
@@ -38,7 +47,31 @@ function Invoke-DatabricksCommand {
         -ExampleConfigPath "$PSScriptRoot/../config.example.json"
 
     $dbConfig = $config.databricks
-    $dbProfile = if ($dbConfig.profile) { $dbConfig.profile } else { "DEFAULT" }
+
+    # Apply environment-specific configuration if specified
+    if ($Environment) {
+        if (-not $dbConfig.environments) {
+            throw "No environments configured in config.json. Please add an 'environments' section."
+        }
+        if (-not $dbConfig.environments.$Environment) {
+            $availableEnvs = ($dbConfig.environments.PSObject.Properties.Name -join ', ')
+            throw "Environment '$Environment' not found in config. Available environments: $availableEnvs"
+        }
+
+        $envConfig = $dbConfig.environments.$Environment
+        Write-Host "Using environment: $Environment" -ForegroundColor Magenta
+
+        # Override with environment-specific values
+        $dbProfile = $envConfig.profile
+        $dbHost = $envConfig.host
+        $dbClusterId = $envConfig.clusterId
+    }
+    else {
+        # Use default configuration
+        $dbProfile = if ($dbConfig.profile) { $dbConfig.profile } else { "DEFAULT" }
+        $dbHost = $dbConfig.host
+        $dbClusterId = $dbConfig.clusterId
+    }
 
     # If version not specified, try to read from pyproject.toml
     if (-not $PackageVersion -and ($Command -in @('upload', 'install', 'upstall'))) {
@@ -58,15 +91,15 @@ function Invoke-DatabricksCommand {
     switch ($Command) {
         "login" {
             Write-Host "Logging into Databricks..." -ForegroundColor Cyan
-            databricks auth login --host $dbConfig.host --account-id $dbConfig.accountId -p $dbProfile
+            databricks auth login --host $dbHost --account-id $dbConfig.accountId -p $dbProfile
         }
         "start" {
             Write-Host "Starting cluster..." -ForegroundColor Cyan
-            databricks clusters start $dbConfig.clusterId -p $dbProfile
+            databricks clusters start $dbClusterId -p $dbProfile
         }
         "stop" {
             Write-Host "Stopping cluster..." -ForegroundColor Cyan
-            databricks clusters stop $dbConfig.clusterId -p $dbProfile
+            databricks clusters stop $dbClusterId -p $dbProfile
         }
         { $_ -in @("list", "ls") } {
             Write-Host "Listing clusters..." -ForegroundColor Cyan
@@ -88,7 +121,7 @@ function Invoke-DatabricksCommand {
             Write-Host "Installing version $PackageVersion on cluster..." -ForegroundColor Cyan
             $fileName = "$($dbConfig.defaultPackage)-$PackageVersion-py3-none-any.whl"
             $json = @{
-                "cluster_id" = $dbConfig.clusterId
+                "cluster_id" = $dbClusterId
                 "libraries"  = @(
                     @{
                         "whl" = "/Workspace/Users/$($dbConfig.accountId)/$fileName"
@@ -98,8 +131,14 @@ function Invoke-DatabricksCommand {
             databricks libraries install -p $dbProfile --json $json
         }
         "upstall" {
-            Invoke-DatabricksCommand -Command upload -PackageVersion $PackageVersion
-            Invoke-DatabricksCommand -Command install -PackageVersion $PackageVersion
+            $params = @{
+                PackageVersion = $PackageVersion
+            }
+            if ($Environment) {
+                $params.Environment = $Environment
+            }
+            Invoke-DatabricksCommand -Command upload @params
+            Invoke-DatabricksCommand -Command install @params
         }
         "keep-alive" {
             Start-DatabricksKeepAlive
