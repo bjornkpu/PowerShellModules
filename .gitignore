@@ -5,6 +5,13 @@
 # User files
 .vscode
 .idea
+**/.claude/
+**/CLAUDE.md
+**/.github/agents/*
+**/.github/instructions/*
+**/.github/skills/*
+**/.github/copilot*.md
 # Temp files
 archive/
+tmp/
 # Secrets
