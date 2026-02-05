@@ -1,0 +1,99 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "required": [
+        "source",
+        "lunch",
+        "targets"
+    ],
+    "properties": {
+        "source": {
+            "type": "object",
+            "required": [
+                "backend",
+                "apiToken",
+                "workspaceId"
+            ],
+            "properties": {
+                "backend": {
+                    "type": "string",
+                    "enum": [
+                        "toggl"
+                    ],
+                    "description": "Time tracking backend to use (currently only 'toggl' supported)"
+                },
+                "apiToken": {
+                    "type": "string",
+                    "pattern": "^(?!<).*(?<!>)$",
+                    "minLength": 32,
+                    "description": "Toggl Track API token (get from https://track.toggl.com/profile)"
+                },
+                "workspaceId": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "Toggl workspace ID (numeric)"
+                }
+            }
+        },
+        "lunch": {
+            "type": "object",
+            "required": [
+                "client",
+                "project"
+            ],
+            "properties": {
+                "client": {
+                    "type": "string",
+                    "pattern": "^(?!<).*(?<!>)$",
+                    "description": "Client name for lunch entries (e.g., 'Punsvik')"
+                },
+                "project": {
+                    "type": "string",
+                    "pattern": "^(?!<).*(?<!>)$",
+                    "description": "Project name for lunch entries (e.g., 'Lunsj')"
+                }
+            }
+        },
+        "targets": {
+            "type": "object",
+            "description": "Reporting targets (timesheet systems)",
+            "additionalProperties": {
+                "type": "object",
+                "required": [
+                    "enabled",
+                    "company",
+                    "system",
+                    "rounding",
+                    "projectMappings"
+                ],
+                "properties": {
+                    "enabled": {
+                        "type": "boolean",
+                        "description": "Whether this target is enabled"
+                    },
+                    "company": {
+                        "type": "string",
+                        "description": "Company name for this target"
+                    },
+                    "system": {
+                        "type": "string",
+                        "description": "System name (e.g., 'TimeReg', 'xLedger')"
+                    },
+                    "rounding": {
+                        "type": "number",
+                        "minimum": 0.01,
+                        "default": 0.5,
+                        "description": "Round hours to nearest increment (e.g., 0.5 for 30min, 0.25 for 15min)"
+                    },
+                    "projectMappings": {
+                        "type": "object",
+                        "description": "Map source project names to target project names/codes",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

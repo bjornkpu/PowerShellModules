@@ -2,6 +2,18 @@
 
 # Built content
 .venv
+
+# Python
+__pycache__/
+*.py[cod]
+.Python
+**/python/.venv/
+.pytest_cache/
+.coverage
+dist/
+build/
+*.egg-info/
+
 # User files
 .vscode
 .idea

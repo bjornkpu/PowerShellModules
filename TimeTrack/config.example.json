@@ -1,0 +1,41 @@
+{
+    "source": {
+        "backend": "toggl",
+        "apiToken": "<your-toggl-api-token>",
+        "workspaceId": 1234567
+    },
+    "lunch": {
+        "client": "Punsvik",
+        "project": "Lunsj"
+    },
+    "targets": {
+        "timereg": {
+            "enabled": true,
+            "company": "Crayon",
+            "system": "TimeReg",
+            "rounding": 0.5,
+            "projectMappings": {
+                "Work Crayon": "Crayon",
+                "Enova Project": "Enova - data, analyse og innsikt"
+            }
+        },
+        "miles": {
+            "enabled": true,
+            "company": "Miles",
+            "system": "xLedger",
+            "rounding": 0.5,
+            "projectMappings": {
+                "Enova Project": "600 - Enova / Project - CODE123"
+            }
+        },
+        "enova": {
+            "enabled": true,
+            "company": "Enova",
+            "system": "xLedger",
+            "rounding": 0.5,
+            "projectMappings": {
+                "Enova Project": "Project Name (CODE123)"
+            }
+        }
+    }
+}
