@@ -88,7 +88,7 @@ def generate_enova_report(
     # Add total
     rows.append(["", "TOTAL", f"{total_hours:.1f}"])
 
-    week_str = monday.strftime("Week %W, %Y")
+    week_str = monday.strftime("Week %V, %G")
     title = f"Enova Report - {week_str}"
 
     return format_table(headers, rows, title)

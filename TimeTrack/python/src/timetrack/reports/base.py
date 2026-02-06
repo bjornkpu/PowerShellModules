@@ -214,7 +214,7 @@ def _generate_pivoted_report(
         total_row.append(f"{rounded_grand:.1f}")
         rows.append(total_row)
 
-    week_str = monday.strftime("Week %W, %Y")
+    week_str = monday.strftime("Week %V, %G")
     title = f"{company} {system} Report - {week_str}"
 
     return format_table(headers, rows, title)

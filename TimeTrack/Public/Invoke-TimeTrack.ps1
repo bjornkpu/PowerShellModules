@@ -45,7 +45,7 @@ function Invoke-TimeTrack {
     [CmdletBinding()]
     [Alias('tt')]
     param(
-        [Parameter(Mandatory, Position = 0)]
+        [Parameter(Position = 0)]
         [ValidateSet('set-lunch', 'report', 'remaining')]
         [string]$Command,
 
@@ -61,6 +61,23 @@ function Invoke-TimeTrack {
         [Parameter()]
         [switch]$DryRun
     )
+
+    if (-not $Command) {
+        Write-Host "TimeTrack - Time tracking automation" -ForegroundColor Cyan
+        Write-Host ""
+        Write-Host "Commands:" -ForegroundColor Yellow
+        Write-Host "  set-lunch   Add lunch breaks to current week"
+        Write-Host "  report      Generate report for a timesheet system"
+        Write-Host "  remaining   Show hours remaining to work this month"
+        Write-Host ""
+        Write-Host "Usage examples:" -ForegroundColor Yellow
+        Write-Host "  tt set-lunch                        Add lunch breaks to current week"
+        Write-Host "  tt set-lunch --week 4 --dry-run     Preview lunch break insertion for week 4"
+        Write-Host "  tt report timereg --week 2026-01-27  Generate TimeReg report for week containing Jan 27"
+        Write-Host "  tt report all                       Generate reports for all systems (current week)"
+        Write-Host "  tt remaining                        Show hours remaining to work this month"
+        return
+    }
 
     # Lazy-load config
     if (-not $script:config) {
