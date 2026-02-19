@@ -115,7 +115,7 @@ function Deploy-PythonPackage {
 
         # Run deployment command
         Write-Host "`nDeploying to Databricks..." -ForegroundColor Cyan
-        Invoke-DatabricksCommand -Command upstall -PackageVersion $newVersion
+        Invoke-DatabricksCommand -Command upstall -Version $newVersion
 
         if ($LASTEXITCODE -ne 0) {
             throw "Deployment failed!"
