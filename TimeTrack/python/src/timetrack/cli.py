@@ -5,7 +5,7 @@ from datetime import datetime
 import typer
 
 from . import __version__
-from .config import get_lunch_project, load_config
+from .config import get_lunch_project, get_lunch_timezone, load_config
 from .core import process_week_lunches
 from .providers import create_provider
 from .utils import get_workdays_in_month
@@ -68,12 +68,13 @@ def set_lunch(
         config = load_config()
         provider = create_provider(config)
         lunch_project = get_lunch_project(config)
+        lunch_timezone = get_lunch_timezone(config)
 
         typer.echo(f"Processing lunch breaks for week {week or 'current'}...")
         if dry_run:
             typer.echo("DRY RUN - No changes will be made\n")
 
-        summary = process_week_lunches(week, provider, lunch_project, dry_run)
+        summary = process_week_lunches(week, provider, lunch_project, dry_run, lunch_timezone)
 
         # Display results
         week_start = summary["week_start"].strftime("%Y-%m-%d")

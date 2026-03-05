@@ -2,6 +2,7 @@
 
 from datetime import datetime, timedelta
 from typing import Any
+from zoneinfo import ZoneInfo
 
 from .providers.base import TimeTrackingProvider
 from .utils import parse_week_reference
@@ -14,6 +15,7 @@ def insert_lunch_break(
     lunch_start_hour: int = 11,
     lunch_start_minute: int = 0,
     lunch_duration_minutes: int = 30,
+    timezone: str = "Europe/Oslo",
 ) -> dict[str, Any]:
     """Insert lunch break for a single day (testable function).
 
@@ -27,6 +29,7 @@ def insert_lunch_break(
         lunch_start_hour: Lunch start hour (default 11)
         lunch_start_minute: Lunch start minute (default 0)
         lunch_duration_minutes: Lunch duration in minutes (default 30)
+        timezone: IANA timezone for lunch time (default 'Europe/Oslo')
 
     Returns:
         Dictionary with operation result:
@@ -69,26 +72,15 @@ def insert_lunch_break(
             "lunch_entry_id": None,
         }
 
-    # Define lunch time window - use local timezone
-    # Create naive datetime first, then make it timezone-aware using local timezone
-    from datetime import datetime as dt
-
+    # Define lunch time window in the configured timezone
     lunch_start_naive = day_start.replace(hour=lunch_start_hour, minute=lunch_start_minute)
-
-    # Get local timezone from existing entries, or use system local time
-    if work_entries and work_entries[0].start.tzinfo:
-        # Use timezone from existing entries
-        local_tz = work_entries[0].start.tzinfo
-        # Convert naive to aware in the same timezone as entries
-        lunch_start = lunch_start_naive.replace(tzinfo=local_tz)
-    else:
-        # Fallback: create timezone-aware datetime in local timezone, then convert to UTC
-        lunch_start = lunch_start_naive.astimezone()
+    local_tz = ZoneInfo(timezone)
+    lunch_start = lunch_start_naive.replace(tzinfo=local_tz)
 
     lunch_end = lunch_start + timedelta(minutes=lunch_duration_minutes)
 
     # Get current time in the same timezone
-    now = dt.now(lunch_start.tzinfo)
+    now = datetime.now(lunch_start.tzinfo)
 
     # Find entries overlapping lunch window or running entries past lunch time
     overlapping = []
@@ -200,6 +192,7 @@ def process_week_lunches(
     provider: TimeTrackingProvider,
     lunch_project: str,
     dry_run: bool = False,
+    timezone: str = "Europe/Oslo",
 ) -> dict[str, Any]:
     """Process lunch breaks for a week (Mon-Fri).
 
@@ -208,6 +201,7 @@ def process_week_lunches(
         provider: Time tracking provider
         lunch_project: Project name for lunch entries
         dry_run: If True, don't modify entries, just return summary
+        timezone: IANA timezone for lunch time (default 'Europe/Oslo')
 
     Returns:
         Dictionary with summary:
@@ -270,7 +264,7 @@ def process_week_lunches(
             }
         else:
             # Actually insert lunch
-            result = insert_lunch_break(day, provider, lunch_project)
+            result = insert_lunch_break(day, provider, lunch_project, timezone=timezone)
             result["date"] = day
 
         # Update summary counts

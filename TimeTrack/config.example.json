@@ -6,7 +6,8 @@
     },
     "lunch": {
         "client": "Punsvik",
-        "project": "Lunsj"
+        "project": "Lunsj",
+        "timezone": "Europe/Oslo"
     },
     "targets": {
         "timereg": {

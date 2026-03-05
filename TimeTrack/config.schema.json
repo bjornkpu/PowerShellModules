@@ -51,6 +51,12 @@
                     "type": "string",
                     "pattern": "^(?!<).*(?<!>)$",
                     "description": "Project name for lunch entries (e.g., 'Lunsj')"
+                },
+                "timezone": {
+                    "type": "string",
+                    "pattern": "^(?!<).*(?<!>)$",
+                    "description": "IANA timezone for lunch scheduling (e.g., 'Europe/Oslo'). Defaults to 'Europe/Oslo'.",
+                    "default": "Europe/Oslo"
                 }
             }
         },

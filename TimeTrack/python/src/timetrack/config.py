@@ -74,6 +74,19 @@ def get_lunch_project(config: dict[str, Any]) -> str:
     return lunch_config.get("project") or config.get("lunchProject", "Lunch")
 
 
+def get_lunch_timezone(config: dict[str, Any]) -> str:
+    """Get IANA timezone for lunch scheduling from config.
+
+    Args:
+        config: Configuration dictionary
+
+    Returns:
+        IANA timezone string (e.g., 'Europe/Oslo'), defaults to 'Europe/Oslo'
+    """
+    lunch_config = config.get("lunch", {})
+    return lunch_config.get("timezone", "Europe/Oslo")
+
+
 def get_reporting_rules(config: dict[str, Any], system: str) -> dict[str, Any]:
     """Get reporting rules for specific system (old config structure).
 
