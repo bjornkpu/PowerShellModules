@@ -34,6 +34,9 @@ function Command-Start {
     $dbConfig = $config.databricks
     $envConfig = Get-EnvironmentConfig -Config $dbConfig -Environment $Environment
 
+    # Clean up stale mimir bundle libraries before starting to prevent accumulation
+    Remove-StaleClusterLibraries -ClusterId $envConfig.clusterId -DatabricksProfile $envConfig.profile
+
     Write-Host "Starting cluster..." -ForegroundColor Cyan
     databricks clusters start $envConfig.clusterId -p $envConfig.profile
 }

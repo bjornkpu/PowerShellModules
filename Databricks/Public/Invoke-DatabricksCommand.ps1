@@ -9,14 +9,15 @@ function Invoke-DatabricksCommand {
     configuration through the -Environment parameter.
 
     AVAILABLE COMMANDS
-      login         Authenticate with Databricks workspace
-      start         Start a Databricks cluster
-      stop          Stop a Databricks cluster
-      list, ls      List all clusters in workspace
-      upload        Upload Python package to workspace
-      install       Install package on cluster
-      upstall       Upload and install in one step
-      keep-alive    Keep cluster alive with periodic heartbeat
+      login                 Authenticate with Databricks workspace
+      start                 Start a Databricks cluster
+      stop                  Stop a Databricks cluster
+      list, ls              List all clusters in workspace
+      cleanup-libraries     Remove stale mimir bundle libraries from cluster
+      upload                Upload Python package to workspace
+      install               Install package on cluster
+      upstall               Upload and install in one step
+      keep-alive            Keep cluster alive with periodic heartbeat
 
     .PARAMETER Command
     The command to execute. See AVAILABLE COMMANDS for details.
@@ -60,10 +61,10 @@ function Invoke-DatabricksCommand {
         [Parameter(Position = 0)]
         [ArgumentCompleter({
                 param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
-                $commands = @('login', 'start', 'stop', 'list', 'ls', 'upload', 'install', 'upstall', 'keep-alive')
+                $commands = @('login', 'start', 'stop', 'list', 'ls', 'cleanup-libraries', 'upload', 'install', 'upstall', 'keep-alive')
                 $commands | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object { $_ }
             })]
-        [ValidateSet('login', 'start', 'stop', 'list', 'ls', 'upload', 'install', 'upstall', 'keep-alive')]
+        [ValidateSet('login', 'start', 'stop', 'list', 'ls', 'cleanup-libraries', 'upload', 'install', 'upstall', 'keep-alive')]
         [string]$Command,
 
         [Parameter(Position = 1, ValueFromRemainingArguments = $true)]
@@ -103,6 +104,7 @@ function Invoke-DatabricksCommand {
         'start' { Command-Start @params }
         'stop' { Command-Stop @params }
         { $_ -in @('list', 'ls') } { Command-List @params }
+        'cleanup-libraries' { Command-CleanupLibraries @params }
         'upload' { Command-Upload @params }
         'install' { Command-Install @params }
         'upstall' { Command-Upstall @params }
