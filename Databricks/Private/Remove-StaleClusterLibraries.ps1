@@ -43,9 +43,9 @@ function Remove-StaleClusterLibraries {
         # Parse JSON array of library statuses
         $libraryStatuses = @($responseJson | ConvertFrom-Json -ErrorAction Stop)
 
-        # Filter to only .bundle/mimir/ libraries (DAB-deployed artifacts)
+        # Filter to only .bundle/mimir/ libraries (DAB-deployed artifacts) that are still installed
         $staleLibraries = @($libraryStatuses |
-            Where-Object { $_.library.whl -and $_.library.whl -like "*/.bundle/mimir/*" })
+            Where-Object { $_.library.whl -and $_.library.whl -like "*/.bundle/mimir/*" -and $_.status -eq "INSTALLED" })
 
         # If no stale libraries, exit silently
         if ($staleLibraries.Count -eq 0) {
@@ -60,10 +60,10 @@ function Remove-StaleClusterLibraries {
         } | ConvertTo-Json -Depth 3
 
         # Uninstall the libraries
-        Write-Host "Uninstalling $($staleLibraries.Count) stale mimir bundle libraries..." -ForegroundColor Yellow
-        databricks libraries uninstall $ClusterId -p $DatabricksProfile --json $uninstallPayload | Out-Null
+        Write-Host "Marking $($staleLibraries.Count) stale mimir bundle libraries for removal..." -ForegroundColor Yellow
+        databricks libraries uninstall -p $DatabricksProfile --json $uninstallPayload | Out-Null
 
-        Write-Host "Stale libraries removed successfully." -ForegroundColor Green
+        Write-Host "Stale libraries marked for uninstall (will be removed on cluster restart)." -ForegroundColor Green
     }
     catch {
         # Silently continue if libraries cleanup fails (e.g., cluster already terminated)
