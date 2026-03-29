@@ -75,7 +75,7 @@ function New-RunFailures {
 
     # Get failed runs
     try {
-        $failedRuns = Get-DatabricksFailedRuns -TimeRange $TimeRange -JobId $JobId -Profile $dbConfig.profile -WorkItemMapping $azConfig.workItemMapping
+        $failedRuns = Get-DatabricksFailedRuns -TimeRange $TimeRange -JobId $JobId -DatabricksProfile $dbConfig.profile -WorkItemMapping $azConfig.workItemMapping
 
         if (-not $failedRuns -or $failedRuns.Count -eq 0) {
             Write-Host "No failed runs found in the specified time range." -ForegroundColor Green
@@ -158,7 +158,7 @@ function Get-DatabricksFailedRuns {
         [string]$JobId,
 
         [Parameter(Mandatory)]
-        [string]$Profile,
+        [string]$DatabricksProfile,
 
         [Parameter(Mandatory)]
         [object]$WorkItemMapping
@@ -168,7 +168,7 @@ function Get-DatabricksFailedRuns {
     $startTime = [DateTimeOffset]::Now.AddHours(-$TimeRange).ToUnixTimeMilliseconds()
 
     # Build command
-    $cmdArgs = @('jobs', 'list-runs', '--start-time-from', $startTime, '-p', $Profile, '--output', 'JSON')
+    $cmdArgs = @('jobs', 'list-runs', '--start-time-from', $startTime, '-p', $DatabricksProfile, '--output', 'JSON')
 
     if ($JobId) {
         $cmdArgs += @('--job-id', $JobId)
@@ -289,9 +289,7 @@ function New-RunFailureWorkItem {
     $runId = $Run.run_id
     $jobId = $Run.job_id
     $runName = $Run.run_name
-    $state = $Run.state.result_state
     $stateMessage = $Run.state.state_message
-    $startTime = $Run.start_time
 
     # Determine job/notebook name for title
     $jobName = if ($Run.task.notebook_task) {
@@ -313,13 +311,6 @@ function New-RunFailureWorkItem {
 
     # Build markdown description
     $runUrl = "$DatabricksHost/#job/$jobId/run/$runId"
-    $startTimeFormatted = if ($startTime) {
-        [DateTimeOffset]::FromUnixTimeMilliseconds($startTime).ToString("yyyy-MM-dd HH:mm:ss UTC")
-    }
-    else {
-        "Unknown"
-    }
-
     # Build tags with job ID for duplicate detection
     $jobTag = "databricks-job-$runName"
     $allTags = @($jobTag) + $Tags
