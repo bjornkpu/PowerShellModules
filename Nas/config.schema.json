@@ -1,0 +1,28 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Nas Module Configuration",
+    "description": "Configuration for NAS server SMB access",
+    "type": "object",
+    "required": ["hostname", "username", "password"],
+    "additionalProperties": false,
+    "properties": {
+        "hostname": {
+            "type": "string",
+            "description": "NAS server hostname or IP address",
+            "pattern": "^(?!<).*(?<!>)$",
+            "minLength": 1
+        },
+        "username": {
+            "type": "string",
+            "description": "SMB username",
+            "pattern": "^(?!<).*(?<!>)$",
+            "minLength": 1
+        },
+        "password": {
+            "type": "string",
+            "description": "SMB password",
+            "pattern": "^(?!<).*(?<!>)$",
+            "minLength": 1
+        }
+    }
+}

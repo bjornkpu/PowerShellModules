@@ -1,0 +1,5 @@
+{
+    "hostname": "<nas-hostname-or-ip>",
+    "username": "<smb-username>",
+    "password": "<smb-password>"
+}
