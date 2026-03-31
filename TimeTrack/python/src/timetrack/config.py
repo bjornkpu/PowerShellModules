@@ -41,10 +41,10 @@ def load_config() -> dict[str, Any]:
 
         # Print instructions and exit gracefully (first run is not an error)
         print(f"✓ Config created at: {config_file}\n")
-        print("Please edit the config file and replace placeholder values:")
-        print("  - toggl.apiToken: Get from https://track.toggl.com/profile")
-        print("  - toggl.workspaceId: Your Toggl workspace ID")
-        print("  - projectMappings: Map your Toggl projects to timesheet systems")
+        print("Please edit the config file:")
+        print("  1. Set 'activeSource' to your provider (toggl, solidtime)")
+        print("  2. Fill in credentials for your chosen source")
+        print("  3. Configure projectMappings in targets")
         print("\nThen run the command again.")
         raise SystemExit(0)
 
@@ -54,17 +54,43 @@ def load_config() -> dict[str, Any]:
     except json.JSONDecodeError as e:
         raise ValueError(f"Invalid JSON in config file: {e}") from e
 
-    # Check for placeholder values
-    if "<your-toggl-api-token>" in json.dumps(config):
-        raise ValueError(
-            f"Config contains placeholder values: {config_file}\n\n"
-            f"Please edit the config and replace:\n"
-            f"  - <your-toggl-api-token> with your actual Toggl API token\n"
-            f"  - Update workspaceId, projectMappings, etc.\n\n"
-            f"Get your API token from: https://track.toggl.com/profile"
-        )
+    # Check for placeholder values (any value wrapped in < >)
+    config_str = json.dumps(config)
+    if "<your-" in config_str:
+        # Only check the active source for placeholders
+        active = config.get("activeSource", "")
+        source_cfg = config.get("sources", {}).get(active, {})
+        source_str = json.dumps(source_cfg)
+        if "<your-" in source_str:
+            raise ValueError(
+                f"Active source '{active}' contains placeholder values: {config_file}\n\n"
+                f"Please edit the config and replace placeholder values for '{active}'."
+            )
 
     return config
+
+
+def get_active_source(config: dict[str, Any]) -> tuple[str, dict[str, Any]]:
+    """Get the active source backend name and its config.
+
+    Returns:
+        Tuple of (backend_name, source_config)
+
+    Raises:
+        ValueError: If activeSource or sources not configured
+    """
+    active = config.get("activeSource")
+    if not active:
+        raise ValueError("'activeSource' not set in config")
+
+    sources = config.get("sources", {})
+    if active not in sources:
+        raise ValueError(
+            f"Active source '{active}' not found in sources. "
+            f"Available: {', '.join(sources.keys())}"
+        )
+
+    return active, sources[active]
 
 
 def get_lunch_project(config: dict[str, Any]) -> str:

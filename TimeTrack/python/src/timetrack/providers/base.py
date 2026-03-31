@@ -15,9 +15,10 @@ class TimeEntry:
         duration: int,  # Duration in seconds
         description: str,
         project: str | None,
-        project_id: int | None,
-        workspace_id: int,
+        project_id: str | int | None,
+        workspace_id: str | int,
         tags: list[str] | None = None,
+        billable: bool = False,
     ):
         self.id = id
         self.start = start
@@ -28,6 +29,7 @@ class TimeEntry:
         self.project_id = project_id
         self.workspace_id = workspace_id
         self.tags = tags or []
+        self.billable = billable
 
     @property
     def duration_hours(self) -> float:
@@ -104,7 +106,7 @@ class TimeTrackingProvider(Protocol):
         """
         ...
 
-    def get_project_id(self, project_name: str) -> int | None:
+    def get_project_id(self, project_name: str) -> str | int | None:
         """Get project ID by name.
 
         Args:

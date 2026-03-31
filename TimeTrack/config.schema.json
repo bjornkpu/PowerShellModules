@@ -2,36 +2,83 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "required": [
-        "source",
+        "activeSource",
+        "sources",
         "lunch",
         "targets"
     ],
     "properties": {
-        "source": {
+        "activeSource": {
+            "type": "string",
+            "description": "Which source to use (must match a key in 'sources')"
+        },
+        "sources": {
             "type": "object",
-            "required": [
-                "backend",
-                "apiToken",
-                "workspaceId"
-            ],
+            "description": "Named time tracking provider configurations",
+            "additionalProperties": false,
             "properties": {
-                "backend": {
-                    "type": "string",
-                    "enum": [
-                        "toggl"
+                "toggl": {
+                    "type": "object",
+                    "required": [
+                        "apiToken",
+                        "workspaceId"
                     ],
-                    "description": "Time tracking backend to use (currently only 'toggl' supported)"
+                    "properties": {
+                        "apiToken": {
+                            "type": "string",
+                            "pattern": "^(?!<).*(?<!>)$",
+                            "minLength": 32,
+                            "description": "Toggl Track API token (get from https://track.toggl.com/profile)"
+                        },
+                        "workspaceId": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "description": "Toggl workspace ID (numeric)"
+                        }
+                    }
                 },
-                "apiToken": {
-                    "type": "string",
-                    "pattern": "^(?!<).*(?<!>)$",
-                    "minLength": 32,
-                    "description": "Toggl Track API token (get from https://track.toggl.com/profile)"
+                "solidtime": {
+                    "type": "object",
+                    "required": [
+                        "baseUrl",
+                        "organizationId",
+                        "memberId",
+                        "apiKey"
+                    ],
+                    "properties": {
+                        "baseUrl": {
+                            "type": "string",
+                            "format": "uri",
+                            "description": "Solidtime instance base URL"
+                        },
+                        "organizationId": {
+                            "type": "string",
+                            "pattern": "^(?!<).*(?<!>)$",
+                            "description": "Solidtime organization ID"
+                        },
+                        "memberId": {
+                            "type": "string",
+                            "pattern": "^(?!<).*(?<!>)$",
+                            "description": "Solidtime member ID (from /users/me/memberships)"
+                        },
+                        "apiKey": {
+                            "type": "string",
+                            "pattern": "^(?!<).*(?<!>)$",
+                            "description": "Solidtime API key"
+                        }
+                    }
                 },
-                "workspaceId": {
-                    "type": "integer",
-                    "minimum": 1,
-                    "description": "Toggl workspace ID (numeric)"
+                "mock": {
+                    "type": "object",
+                    "properties": {
+                        "workspaceId": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                },
+                "fixtures": {
+                    "type": "object"
                 }
             }
         },

@@ -1,8 +1,17 @@
 {
-    "source": {
-        "backend": "toggl",
-        "apiToken": "<your-toggl-api-token>",
-        "workspaceId": 1234567
+    "$schema": "config.schema.json",
+    "activeSource": "toggl",
+    "sources": {
+        "toggl": {
+            "apiToken": "<your-toggl-api-token>",
+            "workspaceId": 1234567
+        },
+        "solidtime": {
+            "baseUrl": "<your-solidtime-base-url>",
+            "organizationId": "<your-solidtime-organization-id>",
+            "memberId": "<your-solidtime-member-id>",
+            "apiKey": "<your-solidtime-api-key>"
+        }
     },
     "lunch": {
         "client": "Punsvik",

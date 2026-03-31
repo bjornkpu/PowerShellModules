@@ -257,8 +257,9 @@ def remaining(
             e for e in entries if e.stop and not (e.project and e.project.startswith(lunch_client))
         ]
 
-        # Calculate actual hours
+        # Calculate actual and billable hours
         actual_hours = sum(e.duration_hours for e in work_entries)
+        billable_hours = sum(e.duration_hours for e in work_entries if e.billable)
 
         # Detect vacation days (past workdays with 0 hours)
         dates_with_work = {e.start.date() for e in work_entries}
@@ -298,6 +299,15 @@ def remaining(
         else:
             typer.echo(f"On track:                    {difference:.1f}h")
 
+        # Billable breakdown
+        billable_diff = billable_hours - expected_hours
+        billable_pct = (billable_hours / expected_hours * 100) if expected_hours > 0 else 0
+        typer.echo("")
+        typer.echo(f"Billable hours:              {billable_hours:.1f}h")
+        billable_sign = "+" if billable_diff >= 0 else ""
+        typer.echo(f"Billable vs expected:        {billable_sign}{billable_diff:.1f}h")
+        typer.echo(f"Billable % of expected:      {billable_pct:.1f}%")
+
         typer.echo("\n" + "=" * 50)
         typer.echo(f"Remaining workdays:          {len(future_only)}")
         typer.echo(f"Remaining expected hours:    {future_expected:.1f}h")
@@ -305,6 +315,10 @@ def remaining(
         if len(future_only) > 0:
             needed_daily = (future_expected - difference) / len(future_only)
             typer.echo(f"Needed per day to finish:    {needed_daily:.1f}h")
+
+            total_expected = expected_hours + future_expected
+            billable_needed = (total_expected - billable_hours) / len(future_only)
+            typer.echo(f"Needed billable/day for 100%: {billable_needed:.1f}h")
 
     except Exception as e:
         typer.echo(f"Error: {e}", err=True)

@@ -9,10 +9,10 @@ from zoneinfo import ZoneInfo
 
 import httpx
 
-from src.timetrack.config import load_config
+from src.timetrack.config import get_active_source, load_config
 
 config = load_config()
-source = config.get("source", {})
+_, source = get_active_source(config)
 api_token = source.get("apiToken")
 
 if not api_token:
