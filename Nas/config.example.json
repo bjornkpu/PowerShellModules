@@ -1,5 +1,9 @@
 {
     "hostname": "<nas-hostname-or-ip>",
     "username": "<smb-username>",
-    "password": "<smb-password>"
+    "password": "<smb-password>",
+    "shares": [
+        { "name": "share1", "driveLetter": "S" },
+        { "name": "share2", "driveLetter": "T" }
+    ]
 }

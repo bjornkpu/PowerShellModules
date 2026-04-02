@@ -3,7 +3,7 @@
     "title": "Nas Module Configuration",
     "description": "Configuration for NAS server SMB access",
     "type": "object",
-    "required": ["hostname", "username", "password"],
+    "required": ["hostname", "username", "password", "shares"],
     "additionalProperties": false,
     "properties": {
         "hostname": {
@@ -23,6 +23,27 @@
             "description": "SMB password",
             "pattern": "^(?!<).*(?<!>)$",
             "minLength": 1
+        },
+        "shares": {
+            "type": "array",
+            "description": "SMB shares to mount",
+            "items": {
+                "type": "object",
+                "required": ["name", "driveLetter"],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Share name on the NAS",
+                        "minLength": 1
+                    },
+                    "driveLetter": {
+                        "type": "string",
+                        "description": "Drive letter to mount to (single uppercase letter)",
+                        "pattern": "^[A-Z]$"
+                    }
+                }
+            }
         }
     }
 }

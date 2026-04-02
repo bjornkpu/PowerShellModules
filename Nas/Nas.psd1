@@ -13,7 +13,7 @@
 
     RequiredModules   = @('Shared')
 
-    FunctionsToExport = @('Mount-NasShare', 'Dismount-NasShare')
+    FunctionsToExport = @('Mount-NasShare', 'Mount-AllNasShares', 'Dismount-NasShare')
     CmdletsToExport   = @()
     VariablesToExport = @()
     AliasesToExport   = @()
