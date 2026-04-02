@@ -103,7 +103,7 @@ def insert_lunch_break(
         # Stop the current entry at lunch start
         provider.update_entry(
             running_entry.id,
-            stop=lunch_start.isoformat(),
+            stop=lunch_start,
         )
 
         # Add lunch entry
@@ -121,6 +121,7 @@ def insert_lunch_break(
             description=running_entry.description,
             project_id=running_entry.project_id,
             tags=running_entry.tags,
+            billable=running_entry.billable,
         )
 
         return {
@@ -160,6 +161,7 @@ def insert_lunch_break(
                 description=entry.description,
                 project_id=entry.project_id,
                 tags=entry.tags,
+                billable=entry.billable,
             )
 
         # Create entry after lunch (if exists)
@@ -170,6 +172,7 @@ def insert_lunch_break(
                 description=entry.description,
                 project_id=entry.project_id,
                 tags=entry.tags,
+                billable=entry.billable,
             )
 
     # Add lunch entry

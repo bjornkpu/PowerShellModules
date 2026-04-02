@@ -82,6 +82,7 @@ class RecordingMockProvider(TimeTrackingProvider):
         project_id: int | None = None,
         workspace_id: int | None = None,
         tags: list[str] | None = None,
+        billable: bool = False,
     ) -> TimeEntry:
         """Not implemented for recorded fixtures."""
         raise NotImplementedError("Cannot add entries to recorded fixtures")

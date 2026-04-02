@@ -7,5 +7,7 @@
 			"path": "../../.config/TimeTrack"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"powershell.cwd": "TimeTrack"
+	}
 }

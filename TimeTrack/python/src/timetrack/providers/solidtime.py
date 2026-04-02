@@ -175,6 +175,7 @@ class SolidtimeProvider(TimeTrackingProvider):
         project_id: int | None = None,
         workspace_id: int | None = None,
         tags: list[str] | None = None,
+        billable: bool = False,
     ) -> TimeEntry:
         if start.tzinfo is None:
             start = start.replace(tzinfo=timezone.utc)
@@ -185,7 +186,7 @@ class SolidtimeProvider(TimeTrackingProvider):
             "member_id": self.member_id,
             "start": start.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "end": stop.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "billable": False,
+            "billable": billable,
             "description": description,
         }
 
@@ -200,7 +201,9 @@ class SolidtimeProvider(TimeTrackingProvider):
         return self._parse_entry(response.json()["data"])
 
     def update_entry(self, entry_id: str | int, **kwargs: Any) -> TimeEntry:
-        payload: dict[str, Any] = {}
+        payload: dict[str, Any] = {
+            "member_id": self.member_id,
+        }
 
         if "start" in kwargs:
             s = kwargs["start"]

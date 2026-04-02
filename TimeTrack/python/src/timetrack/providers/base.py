@@ -70,6 +70,7 @@ class TimeTrackingProvider(Protocol):
         project_id: int | None = None,
         workspace_id: int | None = None,
         tags: list[str] | None = None,
+        billable: bool = False,
     ) -> TimeEntry:
         """Create a new time entry.
 

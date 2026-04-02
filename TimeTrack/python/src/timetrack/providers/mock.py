@@ -95,6 +95,7 @@ class MockProvider(TimeTrackingProvider):
         project_id: int | None = None,
         workspace_id: int | None = None,
         tags: list[str] | None = None,
+        billable: bool = False,
     ) -> TimeEntry:
         """Create a mock time entry."""
         entry_id = self._next_entry_id
