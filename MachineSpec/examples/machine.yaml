@@ -1,0 +1,41 @@
+version: 1
+
+winget:
+  packages:
+    - Git.Git
+    - id: Microsoft.PowerShell
+    - JetBrains.Rider
+    - id: Microsoft.VisualStudioCode
+    - astral-sh.uv
+    - OpenJS.NodeJS
+    - Microsoft.DotNet.SDK.8
+
+powershell:
+  repositories:
+    - name: PSGallery
+      trusted: true
+
+  modules:
+    - PSReadLine
+    - posh-git
+    - Terminal-Icons
+    - name: Pester
+      version: 5.7.1
+
+dotnet:
+  tools:
+    - dotnet-ef
+    - id: csharprepl
+      version: 0.6.4
+
+uv:
+  tools:
+    - ruff
+    - name: black
+      version: 24.10.0
+
+npm:
+  globals:
+    - typescript
+    - name: pnpm
+      version: 9.15.0
