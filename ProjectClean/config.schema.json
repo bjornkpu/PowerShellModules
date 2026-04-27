@@ -1,0 +1,65 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "directories": {
+            "type": "array",
+            "description": "Directory rules. Strings match directory names anywhere in the tree (with native PowerShell wildcards). Strings containing '/' or '\\' match paths relative to the target. Object form { name, requires } only matches when a sibling file in the parent matches one of the requires globs.",
+            "items": {
+                "oneOf": [
+                    {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "minLength": 1,
+                                "description": "Directory name to match (no slashes; wildcards allowed)"
+                            },
+                            "requires": {
+                                "type": "array",
+                                "minItems": 1,
+                                "description": "Glob patterns. Rule fires only when a sibling file in the parent of the matched directory matches at least one pattern.",
+                                "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                }
+                            }
+                        },
+                        "required": ["name", "requires"],
+                        "additionalProperties": false
+                    }
+                ]
+            }
+        },
+        "files": {
+            "type": "array",
+            "description": "File-name glob patterns matched anywhere in the tree.",
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
+        },
+        "exclude": {
+            "type": "array",
+            "description": "Paths or names that are never deleted. Same matching grammar as directories. Checked before any rule.",
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
+        },
+        "forbiddenRoots": {
+            "type": "array",
+            "description": "Extra directories that the cleaner refuses to operate on. Drive roots, the user profile and Documents are always forbidden.",
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
+        }
+    },
+    "required": ["directories", "files", "exclude"],
+    "additionalProperties": false
+}

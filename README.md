@@ -71,6 +71,7 @@ Remove-Module ModuleName
 - **Databricks** - CLI for Databricks cluster management and package deployment
 - **WireGuard** - VPN tunnel management with Windows service control
 - **ProjectManager** - Workspace navigation with fuzzy matching and auto-start
+- **ProjectClean** - Configurable cleaner that prunes build artifacts and dependency caches from project trees
 - **Aspire** - .NET Aspire dashboard lifecycle management
 - **Fabric** - Microsoft Fabric AI integration (commit messages)
 - **LinuxAdapter** - Unix-like commands for PowerShell (e.g., `watch`)

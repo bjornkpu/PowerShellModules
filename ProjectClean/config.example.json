@@ -1,0 +1,38 @@
+{
+    "directories": [
+        "node_modules",
+        ".venv",
+        "venv",
+        "__pycache__",
+        ".pytest_cache",
+        ".mypy_cache",
+        ".ruff_cache",
+        "dist",
+        "build",
+        ".next",
+        ".nuxt",
+        ".turbo",
+        ".gradle",
+        ".idea/shelf",
+        {
+            "name": "bin",
+            "requires": ["*.csproj", "*.fsproj", "*.vbproj", "*.sln", "Directory.Build.props"]
+        },
+        {
+            "name": "obj",
+            "requires": ["*.csproj", "*.fsproj", "*.vbproj", "*.sln", "Directory.Build.props"]
+        },
+        {
+            "name": "target",
+            "requires": ["Cargo.toml", "pom.xml"]
+        }
+    ],
+    "files": [
+        "*.pyc",
+        "*.tsbuildinfo"
+    ],
+    "exclude": [
+        ".git"
+    ],
+    "forbiddenRoots": []
+}
