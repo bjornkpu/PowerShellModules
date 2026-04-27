@@ -12,6 +12,9 @@ function Deploy-PythonPackage {
     .PARAMETER BumpType
     The type of version bump: 'major', 'minor', or 'patch' (default: patch)
 
+    .PARAMETER SkipVersionBump
+    Skip the version bump and re-deploy the current version from pyproject.toml.
+
     .EXAMPLE
     Deploy-PythonPackage
     Bumps the patch version and deploys
@@ -19,12 +22,19 @@ function Deploy-PythonPackage {
     .EXAMPLE
     Deploy-PythonPackage -BumpType minor
     Bumps the minor version and deploys
+
+    .EXAMPLE
+    Deploy-PythonPackage -SkipVersionBump
+    Re-builds and deploys the current version without bumping
     #>
     [CmdletBinding()]
     param(
         [Parameter()]
         [ValidateSet('major', 'minor', 'patch')]
-        [string]$BumpType = 'patch'
+        [string]$BumpType = 'patch',
+
+        [Parameter()]
+        [switch]$SkipVersionBump
     )
 
     # Load config
@@ -60,28 +70,34 @@ function Deploy-PythonPackage {
 
         Write-Host "Current version: $currentVersion" -ForegroundColor Yellow
 
-        # Bump version based on type
-        switch ($BumpType) {
-            'major' {
-                $major++
-                $minor = 0
-                $patch = 0
-            }
-            'minor' {
-                $minor++
-                $patch = 0
-            }
-            'patch' {
-                $patch++
-            }
+        if ($SkipVersionBump) {
+            $newVersion = $currentVersion
+            Write-Host "Reusing version: $newVersion" -ForegroundColor Green
         }
+        else {
+            # Bump version based on type
+            switch ($BumpType) {
+                'major' {
+                    $major++
+                    $minor = 0
+                    $patch = 0
+                }
+                'minor' {
+                    $minor++
+                    $patch = 0
+                }
+                'patch' {
+                    $patch++
+                }
+            }
 
-        $newVersion = "$major.$minor.$patch"
-        Write-Host "New version:     $newVersion" -ForegroundColor Green
+            $newVersion = "$major.$minor.$patch"
+            Write-Host "New version:     $newVersion" -ForegroundColor Green
 
-        # Update the version in pyproject.toml
-        $newContent = $content -replace 'version\s*=\s*"\d+\.\d+\.\d+"', "version = `"$newVersion`""
-        Set-Content -Path $pyprojectPath -Value $newContent -NoNewline
+            # Update the version in pyproject.toml
+            $newContent = $content -replace 'version\s*=\s*"\d+\.\d+\.\d+"', "version = `"$newVersion`""
+            Set-Content -Path $pyprojectPath -Value $newContent -NoNewline
+        }
     }
     else {
         throw "Could not find version in pyproject.toml"
